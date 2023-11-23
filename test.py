@@ -1,11 +1,7 @@
+## Header (import des librairies)
 import pandas as pd
 import datetime as dt
-import random as rd
 from variables import *
-
-
-###  - - Fonctions auxiliaires pour clarifier la gestion du pêchage d'un poisson. - - ###
-
 
 
 # Vérifie que l'ID en argument (correspondant à l'ID discord du joueur) est présent dans le DataFrame df
@@ -27,9 +23,6 @@ def check_ID(ID:int): # -> fonction à placer au début de chaque commande du bo
 
     return 1 #Tout s'est bien passé.
 
-
-
-#Fonction qui retourne le nombre de charge disponible du joueur
 def check_charge(ID:int): 
     assert check_ID(ID), "Erreur de vérification de l'ID du joueur"
     # Lecture du fichier csv puis stockage dans un DataFrame
@@ -53,9 +46,8 @@ def check_charge(ID:int):
         charge = 3
 
     return charge
+## Fonctions
 
-
-# Fonction qui renvoie le score d'une pêche de poisson
 def fish(ID:int):
     # On tire un nombre aléatoire entre 0 et 100
     # Si le nombre est inférieur à 10, on pêche un membre de la liste, sinon on pêche un poisson
@@ -72,7 +64,8 @@ def fish(ID:int):
         return 0 # Erreur indéterminée donc c'est la merde lol
     
     random_number = rd.randint(0,100)
-    if random_number<10:
+    print(random_number)
+    if random_number<=10:
         # On pêche un membre de la liste
         peche = rd.choice(noms)
         if peche in quasi_impossible:
@@ -108,19 +101,14 @@ def fish(ID:int):
     return 1 # Tout s'est bien passé
 
 
-# Fonction pour renvoyer l'inventaire d'un joueur
 def get_inventory(ID:int):
     assert check_ID(ID), "Erreur de vérification de l'ID du joueur"
     df = pd.read_csv(CSV_PATH,sep=";")
     inventory = eval(df.loc[df["ID_Joueur"]==ID,"inventaire"][0])
-    li_peche = [pechables[k] for k in range(TAILLE_PECHABLES) if inventory[k]>0]
-    msg_prep = [f"{peche} : {inventory[k]}" for k,peche in enumerate(li_peche)]
+    li_peche = [(pechables[k],inventory[k]) for k in range(TAILLE_PECHABLES) if inventory[k]>0]
+    msg_prep = [f"{el[0]} : {el[1]}" for el in li_peche]
     li_photos = [f"assets/{peche}.png" for peche in li_peche]
     return msg_prep,li_photos
 
-
-def get_score(ID:int):
-    assert check_ID(ID), "Erreur de vérification de l'ID du joueur"
-    df = pd.read_csv(CSV_PATH,sep=";")
-    score = df.loc[df["ID_Joueur"]==ID,"Score"].values[0]
-    return score
+fish(12)
+print(get_inventory(12))
